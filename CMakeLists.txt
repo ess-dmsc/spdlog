@@ -23,6 +23,8 @@ message(STATUS "Build type: " ${CMAKE_BUILD_TYPE})
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+SET(CONAN_PROFILE "default" CACHE STRING "Name of conan profile to use, uses default by default")
+SET(CONAN "AUTO" CACHE STRING "conan options AUTO (conan must be in path), MANUAL (expects conanbuildinfo.cmake in build directory) or DISABLE")
 
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
     add_compile_options("-Wall")
@@ -58,6 +60,26 @@ option(SPDLOG_FMT_EXTERNAL "Use external fmt library instead of bundled" OFF)
 if(SPDLOG_FMT_EXTERNAL)
     find_package(fmt REQUIRED CONFIG)
 endif()
+
+if(${CONAN} MATCHES "AUTO")
+    include(cmake/conan.cmake)
+    conan_cmake_run(CONANFILE conan/conanfile.txt
+            PROFILE ${CONAN_PROFILE}
+            BASIC_SETUP ${OUTPUT_DIRS} SKIP_RPATH
+            BUILD_TYPE "None"
+            BUILD outdated)
+elseif(${CONAN} MATCHES "MANUAL")
+    if(EXISTS "${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
+        include("${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
+        conan_basic_setup(${OUTPUT_DIRS} SKIP_RPATH
+                )
+    else()
+        MESSAGE(FATAL_ERROR "CONAN set to MANUAL but no file named conanbuildinfo.cmake found in build directory")
+    endif()
+elseif(NOT ${CONAN} MATCHES "DISABLE")
+    MESSAGE(FATAL_ERROR "Unrecognised option for CONAN, use AUTO, MANUAL or DISABLE")
+endif()
+
 
 target_include_directories(
     spdlog
