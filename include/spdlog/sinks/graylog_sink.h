@@ -5,7 +5,7 @@
 #endif
 
 #include "spdlog/sinks/base_sink.h"
-#include <graylog_logger/Logger.hpp>
+#include <graylog_logger/Log.hpp>
 #include <map>
 #include <mutex>
 
@@ -15,7 +15,7 @@ namespace sinks {
 template <typename Mutex>
 class graylog_sink : public spdlog::sinks::base_sink<Mutex> {
 private:
-  std::map<level::level_enum, Log::Severity> LogLevels{
+  std::map<int, Log::Severity> LogLevels{
       {SPDLOG_LEVEL_TRACE, Log::Severity::Debug},
       {SPDLOG_LEVEL_DEBUG, Log::Severity::Info},
       {SPDLOG_LEVEL_INFO, Log::Severity::Notice},
@@ -27,8 +27,7 @@ private:
 
 protected:
   void sink_it_(const spdlog::details::log_msg &msg) override {
-    auto Level = LogLevels[msg.level];
-    LogLevels Log::Msg(Level, msg.payload);
+    Log::Msg(LogLevels[msg.level], msg.payload);
   }
   void flush_() override {}
 };
