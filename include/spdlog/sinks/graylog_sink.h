@@ -17,8 +17,8 @@ namespace sinks {
 template <typename Mutex>
 class graylog_sink : public spdlog::sinks::base_sink<Mutex> {
 public:
-  graylog_sink(const std::string &Host, const std::string &Topic) {
-    Log::AddLogHandler(std::make_shared<Log::GraylogInterface>(Host, Topic));
+  graylog_sink(const std::string &Host, const int &Port) {
+    Log::AddLogHandler(new Log::GraylogInterface(Host, Port));
   }
 
 private:
