@@ -3,6 +3,7 @@ graylog-logger/1.1.1-dm1@ess-dmsc/stable
 
 [generators]
 cmake
+virtualrunenv
 
 [imports]
 lib, *.dylib* -> ./lib

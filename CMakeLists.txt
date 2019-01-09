@@ -37,8 +37,8 @@ endif()
 
 include(cmake/conan.cmake)
 conan_cmake_run(CONANFILE conan/conanfile.txt
-        PROFILE ${CONAN_PROFILE}
-        BASIC_SETUP ${OUTPUT_DIRS} SKIP_RPATH
+        PROFILE default
+        BASIC_SETUP CMAKE_TARGETS SKIP_RPATH
         BUILD_TYPE "None"
         BUILD outdated)
 
@@ -77,7 +77,7 @@ target_include_directories(
     "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
 )
 
-target_link_libraries(spdlog INTERFACE graylog_logger)
+target_link_libraries(spdlog INTERFACE CONAN_PKG::graylog_logger)
 
 if(SPDLOG_FMT_EXTERNAL)
     target_compile_definitions(spdlog INTERFACE SPDLOG_FMT_EXTERNAL)
