@@ -77,7 +77,7 @@ target_include_directories(
     "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
 )
 
-target_link_libraries(spdlog INTERFACE CONAN_PKG::graylog_logger)
+target_link_libraries(spdlog INTERFACE CONAN_PKG::graylog-logger)
 
 if(SPDLOG_FMT_EXTERNAL)
     target_compile_definitions(spdlog INTERFACE SPDLOG_FMT_EXTERNAL)

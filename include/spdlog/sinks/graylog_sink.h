@@ -16,6 +16,11 @@ namespace sinks {
 
 template <typename Mutex>
 class graylog_sink : public spdlog::sinks::base_sink<Mutex> {
+public:
+  graylog_sink(const std::string &Host, const std::string &Topic) {
+    Log::AddLogHandler(std::make_shared<Log::GraylogInterface>(Host, Topic));
+  }
+
 private:
   std::map<int, Log::Severity> LogLevels{
       {SPDLOG_LEVEL_TRACE, Log::Severity::Debug},
@@ -26,16 +31,11 @@ private:
       {SPDLOG_LEVEL_CRITICAL, Log::Severity::Critical},
       {SPDLOG_LEVEL_OFF, Log::Severity::Alert}};
 
-public:
-  graylog_sink(const std::string &Host, const std::string &Topic) {
-    Log::AddLogHandler(std::make_shared<Log::GraylogInterface>(Host, Topic));
-  }
-
 protected:
   void sink_it_(const spdlog::details::log_msg &msg) override {
     Log::Msg(LogLevels[msg.level], msg.payload);
   }
-  void flush_() override {}
+  void flush_() override{};
 };
 }
 }
