@@ -23,6 +23,8 @@ message(STATUS "Build type: " ${CMAKE_BUILD_TYPE})
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+SET(CONAN_PROFILE "default" CACHE STRING "Name of conan profile to use, uses default by default")
+SET(CONAN "AUTO" CACHE STRING "conan options AUTO (conan must be in path), MANUAL (expects conanbuildinfo.cmake in build directory) or DISABLE")
 
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
     add_compile_options("-Wall")
@@ -32,6 +34,13 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_CXX_COMPILER_ID}" MATCH
     add_compile_options("-Wfatal-errors")
     
 endif()
+
+include(cmake/conan.cmake)
+conan_cmake_run(CONANFILE conan/conanfile.txt
+        PROFILE default
+        BASIC_SETUP CMAKE_TARGETS SKIP_RPATH
+        BUILD_TYPE "None"
+        BUILD outdated)
 
 #---------------------------------------------------------------------------------------
 # address sanitizers check
@@ -59,12 +68,16 @@ if(SPDLOG_FMT_EXTERNAL)
     find_package(fmt REQUIRED CONFIG)
 endif()
 
+LINK_DIRECTORIES(${CMAKE_BINARY_DIR}/lib)
+
 target_include_directories(
     spdlog
     INTERFACE
     "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>"
     "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
 )
+
+target_link_libraries(spdlog INTERFACE CONAN_PKG::graylog-logger)
 
 if(SPDLOG_FMT_EXTERNAL)
     target_compile_definitions(spdlog INTERFACE SPDLOG_FMT_EXTERNAL)
