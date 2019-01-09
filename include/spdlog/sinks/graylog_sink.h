@@ -28,7 +28,7 @@ private:
 
 public:
   graylog_sink(const std::string &Host, const std::string &Topic) {
-    Log::AddLogHandler(std::make_shared<Log::GraylogInterface>(Host, Port));
+    Log::AddLogHandler(std::make_shared<Log::GraylogInterface>(Host, Topic));
   }
 
 protected:
