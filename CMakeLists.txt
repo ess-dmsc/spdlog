@@ -68,6 +68,8 @@ if(SPDLOG_FMT_EXTERNAL)
     find_package(fmt REQUIRED CONFIG)
 endif()
 
+LINK_DIRECTORIES(${CMAKE_BINARY_DIR}/lib)
+
 target_include_directories(
     spdlog
     INTERFACE
