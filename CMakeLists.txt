@@ -35,6 +35,13 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_CXX_COMPILER_ID}" MATCH
     
 endif()
 
+include(cmake/conan.cmake)
+conan_cmake_run(CONANFILE conan/conanfile.txt
+        PROFILE ${CONAN_PROFILE}
+        BASIC_SETUP ${OUTPUT_DIRS} SKIP_RPATH
+        BUILD_TYPE "None"
+        BUILD outdated)
+
 #---------------------------------------------------------------------------------------
 # address sanitizers check
 #---------------------------------------------------------------------------------------
@@ -61,32 +68,14 @@ if(SPDLOG_FMT_EXTERNAL)
     find_package(fmt REQUIRED CONFIG)
 endif()
 
-if(${CONAN} MATCHES "AUTO")
-    include(cmake/conan.cmake)
-    conan_cmake_run(CONANFILE conan/conanfile.txt
-            PROFILE ${CONAN_PROFILE}
-            BASIC_SETUP ${OUTPUT_DIRS} SKIP_RPATH
-            BUILD_TYPE "None"
-            BUILD outdated)
-elseif(${CONAN} MATCHES "MANUAL")
-    if(EXISTS "${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
-        include("${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
-        conan_basic_setup(${OUTPUT_DIRS} SKIP_RPATH
-                )
-    else()
-        MESSAGE(FATAL_ERROR "CONAN set to MANUAL but no file named conanbuildinfo.cmake found in build directory")
-    endif()
-elseif(NOT ${CONAN} MATCHES "DISABLE")
-    MESSAGE(FATAL_ERROR "Unrecognised option for CONAN, use AUTO, MANUAL or DISABLE")
-endif()
-
-
 target_include_directories(
     spdlog
     INTERFACE
     "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>"
     "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
 )
+
+target_link_libraries(spdlog INTERFACE graylog_logger)
 
 if(SPDLOG_FMT_EXTERNAL)
     target_compile_definitions(spdlog INTERFACE SPDLOG_FMT_EXTERNAL)
