@@ -33,7 +33,7 @@ private:
 
 protected:
   void sink_it_(const spdlog::details::log_msg &msg) override {
-    Log::Msg(LogLevels[msg.level], msg.payload);
+    Log::Msg(LogLevels[msg.level],  std::string(msg.payload.data()));
   }
   void flush_() override{};
 };
