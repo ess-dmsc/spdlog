@@ -4,10 +4,13 @@
 #error "spdlog.h must be included before this file."
 #endif
 
+#include "spdlog/details/null_mutex.h"
 #include "spdlog/sinks/base_sink.h"
+
 #include <graylog_logger/FileInterface.hpp>
 #include <graylog_logger/GraylogInterface.hpp>
 #include <graylog_logger/Log.hpp>
+
 #include <map>
 #include <mutex>
 
@@ -15,7 +18,7 @@ namespace spdlog {
 namespace sinks {
 
 template <typename Mutex>
-class graylog_sink : public spdlog::sinks::base_sink<Mutex> {
+class graylog_sink final : public spdlog::sinks::base_sink<Mutex> {
 public:
   explicit graylog_sink(const std::string &Host, int Port) {
     Log::AddLogHandler(new Log::GraylogInterface(Host, Port));
@@ -37,5 +40,22 @@ protected:
   }
   void flush_() override{};
 };
+using graylog_sink_mt = graylog_sink<std::mutex>;
+using graylog_sink_st = graylog_sink<details::null_mutex>;
+}
+
+//
+// factory functions
+//
+template<typename Factory = default_factory>
+inline std::shared_ptr<logger> graylog_mt(const std::string &logger_name, const std::string &host, const int &port)
+{
+  return Factory::template create<sinks::graylog_sink_mt>(logger_name, host, port);
+}
+
+template<typename Factory = default_factory>
+inline std::shared_ptr<logger> graylog_st(const std::string &logger_name, const std::string &host, const int &port)
+{
+  return Factory::template create<sinks::graylog_sink_st>(logger_name, host, port);
 }
 }

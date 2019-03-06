@@ -21,6 +21,7 @@ void user_defined_example();
 void err_handler_example();
 void syslog_example();
 void clone_example();
+void graylog_example();
 
 #include "spdlog/spdlog.h"
 
@@ -57,6 +58,7 @@ int main(int, char *[])
         user_defined_example();
         err_handler_example();
         trace_example();
+        graylog_example();
 
         // Flush all *registered* loggers using a worker thread every 3 seconds.
         // note: registered loggers *must* be thread safe for this to work correctly!
@@ -86,6 +88,12 @@ void stdout_logger_example()
     auto console = spdlog::stdout_color_mt("console");
     // or for stderr:
     // auto console = spdlog::stderr_color_mt("error-logger");
+}
+
+#include "spdlog/sinks/graylog_sink.h"
+void graylog_example()
+{
+    auto logger = spdlog::graylog_mt("graylog_logger", "host", 9000);
 }
 
 #include "spdlog/sinks/basic_file_sink.h"
