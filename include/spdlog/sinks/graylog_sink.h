@@ -21,6 +21,7 @@ template <typename Mutex>
 class graylog_sink final : public spdlog::sinks::base_sink<Mutex> {
 public:
   explicit graylog_sink(const spdlog::level::level_enum &LoggingLevel, const std::string &Host, int Port) {
+    Log::RemoveAllHandlers(); // Remove the default (console) log handler
     Log::AddLogHandler(new Log::GraylogInterface(Host, Port));
     Log::SetMinimumSeverity(LogLevels[LoggingLevel]);
   }
