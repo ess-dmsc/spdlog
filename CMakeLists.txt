@@ -60,7 +60,7 @@ if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
 endif()
 
 option(SPDLOG_BUILD_EXAMPLES "Build examples" ${SPDLOG_MASTER_PROJECT})
-option(SPDLOG_BUILD_BENCH "Build benchmarks" ${SPDLOG_MASTER_PROJECT})
+option(SPDLOG_BUILD_BENCH "Build benchmarks" OFF )
 option(SPDLOG_BUILD_TESTS "Build tests" ${SPDLOG_MASTER_PROJECT})
 option(SPDLOG_FMT_EXTERNAL "Use external fmt library instead of bundled" OFF)
 

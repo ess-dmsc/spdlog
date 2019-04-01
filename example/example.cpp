@@ -93,7 +93,7 @@ void stdout_logger_example()
 #include "spdlog/sinks/graylog_sink.h"
 void graylog_example()
 {
-    auto logger = spdlog::graylog_mt("graylog_logger", "host", 9000);
+    auto logger = spdlog::graylog_mt("graylog_logger", spdlog::level::debug, "host", 9000);
 }
 
 #include "spdlog/sinks/basic_file_sink.h"

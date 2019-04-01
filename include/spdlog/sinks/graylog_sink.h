@@ -20,8 +20,9 @@ namespace sinks {
 template <typename Mutex>
 class graylog_sink final : public spdlog::sinks::base_sink<Mutex> {
 public:
-  explicit graylog_sink(const std::string &Host, int Port) {
+  explicit graylog_sink(const spdlog::level::level_enum &LoggingLevel, const std::string &Host, int Port) {
     Log::AddLogHandler(new Log::GraylogInterface(Host, Port));
+    Log::SetMinimumSeverity(LogLevels[LoggingLevel]);
   }
 
 private:
@@ -48,14 +49,14 @@ using graylog_sink_st = graylog_sink<details::null_mutex>;
 // factory functions
 //
 template<typename Factory = default_factory>
-inline std::shared_ptr<logger> graylog_mt(const std::string &logger_name, const std::string &host, const int &port)
+inline std::shared_ptr<logger> graylog_mt(const std::string &logger_name, const spdlog::level::level_enum &LoggingLevel, const std::string &host, const int &port)
 {
-  return Factory::template create<sinks::graylog_sink_mt>(logger_name, host, port);
+  return Factory::template create<sinks::graylog_sink_mt>(logger_name, LoggingLevel,host, port);
 }
 
 template<typename Factory = default_factory>
-inline std::shared_ptr<logger> graylog_st(const std::string &logger_name, const std::string &host, const int &port)
+inline std::shared_ptr<logger> graylog_st(const std::string &logger_name, const spdlog::level::level_enum &LoggingLevel, const std::string &host, const int &port)
 {
-  return Factory::template create<sinks::graylog_sink_st>(logger_name, host, port);
+  return Factory::template create<sinks::graylog_sink_st>(logger_name, LoggingLevel, host, port);
 }
 }
