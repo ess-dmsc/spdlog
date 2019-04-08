@@ -62,7 +62,7 @@ endif()
 option(SPDLOG_BUILD_EXAMPLES "Build examples" ${SPDLOG_MASTER_PROJECT})
 option(SPDLOG_BUILD_BENCH "Build benchmarks" OFF )
 option(SPDLOG_BUILD_TESTS "Build tests" ${SPDLOG_MASTER_PROJECT})
-option(SPDLOG_FMT_EXTERNAL "Use external fmt library instead of bundled" OFF)
+option(SPDLOG_FMT_EXTERNAL "Use external fmt library instead of bundled" ON)
 
 if(SPDLOG_FMT_EXTERNAL)
     find_package(fmt REQUIRED CONFIG)
