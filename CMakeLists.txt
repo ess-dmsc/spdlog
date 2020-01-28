@@ -26,7 +26,7 @@ message(STATUS "Build spdlog: ${SPDLOG_VERSION}")
 # Compiler config
 #---------------------------------------------------------------------------------------
 if (NOT CMAKE_CXX_STANDARD)
-    set(CMAKE_CXX_STANDARD 11)
+    set(CMAKE_CXX_STANDARD 14)  # We require C++14 because graylog-logger needs it
     set(CMAKE_CXX_STANDARD_REQUIRED ON)
 endif()
 SET(CONAN_PROFILE "default" CACHE STRING "Name of conan profile to use, uses default by default")
@@ -153,21 +153,22 @@ target_link_libraries(spdlog_header_only INTERFACE Threads::Threads)
 #---------------------------------------------------------------------------------------
 # Use fmt package if using external fmt
 #---------------------------------------------------------------------------------------
+
+LINK_DIRECTORIES(${CMAKE_BINARY_DIR}/lib)
+
+target_include_directories(
+    spdlog
+    INTERFACE
+    "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>"
+    "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
+)
+
+target_link_libraries(spdlog INTERFACE CONAN_PKG::graylog-logger)
+    
 if(SPDLOG_FMT_EXTERNAL OR SPDLOG_FMT_EXTERNAL_HO)
-
-    LINK_DIRECTORIES(${CMAKE_BINARY_DIR}/lib)
-
-    target_include_directories(
-        spdlog
-        INTERFACE
-        "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>"
-        "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
-    )
-
     if (NOT TARGET fmt::fmt)
         find_package(fmt REQUIRED)
     endif ()
-    target_link_libraries(spdlog INTERFACE CONAN_PKG::graylog-logger)
     target_compile_definitions(spdlog PUBLIC SPDLOG_FMT_EXTERNAL)
     target_compile_definitions(spdlog_header_only INTERFACE SPDLOG_FMT_EXTERNAL)
 
