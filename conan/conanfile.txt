@@ -1,6 +1,6 @@
 [requires]
-graylog-logger/1.1.1-dm1@ess-dmsc/stable
-fmt/5.2.0@bincrafters/stable
+graylog-logger/2.0.1-dm1@ess-dmsc/stable
+fmt/6.1.2
 
 [generators]
 cmake
